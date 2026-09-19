@@ -30,7 +30,7 @@
         margin: 0;
         color: var(--ink);
         background: var(--canvas);
-        min-width: 1080px;
+        min-width: 1188px;
       }
 
       button, textarea, select { font: inherit; }
@@ -78,7 +78,8 @@
       .avatar { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; color: #153043; background: #bfece2; font-size: 12px; font-weight: 800; }
 
       .workspace {
-        width: min(1440px, calc(100% - 48px));
+        width: calc(100% - 48px);
+        min-width: 1140px;
         margin: 0 auto;
         padding: 26px 0 42px;
         flex: 1;
@@ -90,7 +91,7 @@
       .heading-meta { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
       .draft-pill { padding: 5px 9px; border: 1px solid #e4d9b8; border-radius: 20px; color: #98651f; background: #fff9e8; font-size: 11px; font-weight: 700; }
 
-      .workspace-grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; align-items: start; }
+      .workspace-grid { display: grid; grid-template-columns: minmax(460px, calc(50% - 10px)) minmax(560px, calc(50% - 10px)); gap: 20px; align-items: start; }
       .card { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); box-shadow: var(--shadow); }
 
       .editor-card { min-height: 720px; overflow: hidden; }
@@ -124,7 +125,7 @@
       .md-badge { padding: 3px 5px; border-radius: 4px; color: #67757c; background: #edf1f0; font-size: 10px; font-weight: 800; }
 
       .sidebar { display: flex; flex-direction: column; gap: 14px; }
-      .control-card { overflow: hidden; }
+      .control-card { overflow: visible; }
       .control-block { padding: 20px 20px 18px; border-bottom: 1px solid var(--line); }
       .control-block:last-child { border-bottom: 0; }
       .control-heading { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px; }
@@ -134,22 +135,22 @@
       .criteria { display: flex; flex-direction: column; gap: 8px; }
       .criteria-item { position: relative; display: flex; gap: 11px; padding: 12px 12px 12px 13px; border: 1px solid #e8eceb; border-radius: 9px; background: #fcfdfc; transition: .16s ease; }
       .criteria-item:hover { border-color: #b8dad4; background: #f8fcfb; }
+      .criteria-item::after { content: attr(data-tooltip); position: absolute; z-index: 20; top: calc(100% + 7px); left: 0; width: 300px; padding: 11px 12px; border: 1px solid #c7dfdb; border-radius: 8px; color: #35545a; background: #f7fffd; box-shadow: 0 10px 24px rgba(26, 42, 52, .14); font-size: 10px; font-weight: 500; line-height: 1.6; opacity: 0; pointer-events: none; transform: translateY(-3px); transition: opacity .15s ease, transform .15s ease; }
+      .criteria-item:hover::after, .criteria-item:focus-visible::after { opacity: 1; transform: translateY(0); }
       .criteria-item input { position: absolute; opacity: 0; pointer-events: none; }
       .checkmark { flex: 0 0 auto; width: 17px; height: 17px; margin-top: 1px; display: grid; place-items: center; border: 1px solid #becbca; border-radius: 5px; color: transparent; background: white; font-size: 11px; font-weight: 900; }
       .criteria-item input:checked + .checkmark { border-color: var(--teal); color: white; background: var(--teal); }
       .criteria-item input:focus-visible + .checkmark { outline: 3px solid rgba(44,154,141,.2); }
       .criteria-copy { min-width: 0; }
       .criteria-name { display: block; margin-bottom: 3px; font-size: 12px; font-weight: 800; }
-      .criteria-description { display: block; color: var(--muted); font-size: 10px; line-height: 1.45; }
 
-      .model-options { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+      .model-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
       .model-option { position: relative; }
       .model-option input { position: absolute; opacity: 0; }
       .model-label { display: block; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: #fff; transition: .16s ease; }
       .model-option input:checked + .model-label { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(44,154,141,.1); background: #f3fbf9; }
       .model-option input:focus-visible + .model-label { outline: 3px solid rgba(44,154,141,.2); }
       .model-name { display: block; font-size: 11px; font-weight: 800; }
-      .model-detail { display: block; margin-top: 5px; color: var(--muted); font-size: 9px; }
 
       .run-area { padding: 18px 20px 20px; background: #f8faf9; }
       .review-button { width: 100%; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 9px; border: 0; border-radius: 9px; color: white; background: var(--navy); box-shadow: 0 8px 16px rgba(16,35,52,.16); font-size: 13px; font-weight: 800; transition: .16s ease; }
@@ -176,15 +177,45 @@
       .result-copy { min-width: 0; }
       .result-name { display: block; font-size: 11px; font-weight: 700; line-height: 1.4; }
       .result-detail { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+      .provider-result { padding: 15px 16px 12px; border-bottom: 1px solid var(--line); }
+      .provider-result:last-child { border-bottom: 0; }
+      .provider-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+      .provider-name { display: block; font-size: 12px; font-weight: 800; }
+      .provider-version { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+      .provider-metrics { display: flex; gap: 7px; }
+      .metric { min-width: 56px; padding: 5px 7px; border: 1px solid #e6ecea; border-radius: 6px; background: #fbfdfc; text-align: right; }
+      .metric-label { display: block; color: var(--muted); font-size: 8px; }
+      .metric-value { display: block; margin-top: 2px; color: var(--ink); font-size: 10px; font-weight: 800; }
+      .error-panel { padding: 10px; border: 1px solid #f1cbca; border-radius: 7px; color: #a94643; background: var(--red-soft); font-size: 10px; line-height: 1.45; }
+      .comparison-table-wrap { overflow-x: auto; }
+      .comparison-table { width: 100%; min-width: 650px; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+      .comparison-table th, .comparison-table td { border-right: 1px solid #edf0ef; border-bottom: 1px solid #edf0ef; vertical-align: middle; }
+      .comparison-table th:last-child, .comparison-table td:last-child { border-right: 0; }
+      .comparison-table th { padding: 12px 13px; color: var(--muted); background: #f8faf9; font-size: 10px; font-weight: 700; text-align: left; }
+      .comparison-table th:first-child { width: 35%; }
+      .comparison-table td { padding: 12px 13px; background: #fff; }
+      .comparison-table tbody tr:last-child td { border-bottom: 0; }
+      .criterion-cell { color: var(--ink); font-size: 11px; font-weight: 700; line-height: 1.4; }
+      .model-column-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 7px; }
+      .model-column-name { display: block; color: var(--ink); font-size: 11px; font-weight: 800; }
+      .model-column-version { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; font-weight: 400; }
+      .model-state { white-space: nowrap; color: var(--muted); font-size: 9px; font-weight: 700; }
+      .model-state.is-done { color: var(--teal); }
+      .model-state.is-error { color: var(--red); }
+      .model-metric-line { display: flex; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 9px; font-weight: 400; }
+      .model-metric-line strong { color: var(--ink); font-weight: 800; }
+      .comparison-cell { min-height: 40px; }
+      .comparison-cell-content { display: flex; align-items: center; gap: 8px; }
+      .comparison-cell-copy { min-width: 0; }
+      .comparison-cell-status { display: block; color: var(--ink); font-size: 10px; font-weight: 800; }
+      .comparison-cell-risk { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+      .comparison-cell.is-pending { color: var(--muted); font-size: 10px; }
+      .comparison-cell.is-error { color: var(--red); font-size: 10px; line-height: 1.4; }
+      .comparison-cell .result-status { width: 22px; height: 22px; }
 
       .toast { position: fixed; right: 28px; bottom: 25px; padding: 12px 15px; border: 1px solid #b7ded7; border-radius: 9px; color: #276f68; background: #f4fffc; box-shadow: 0 10px 25px rgba(26,42,52,.12); font-size: 12px; opacity: 0; transform: translateY(8px); pointer-events: none; transition: .2s ease; }
       .toast.is-visible { opacity: 1; transform: translateY(0); }
 
-      @media (max-width: 1120px) {
-        body { min-width: 0; }
-        .workspace { width: calc(100% - 28px); }
-        .workspace-grid { grid-template-columns: minmax(0, 1fr) 350px; }
-      }
     </style>
   </head>
   <body>
@@ -263,6 +294,10 @@
 
 甲または乙が本契約に違反し、相当期間を定めた催告後も当該違反が是正されない場合、相手方は本契約を解除することができる。
 
+## 第7条（準拠法）
+
+本契約の成立、効力、解釈および履行については、日本法を準拠法とする。
+
 以上</textarea>
             </div>
             <div class="editor-footer">
@@ -279,58 +314,72 @@
                   <span class="count" id="criteriaCount">4 / 4 選択中</span>
                 </div>
                 <div class="criteria">
-                  <label class="criteria-item">
-                    <input type="checkbox" checked data-name="業務範囲の明確性" />
+                  <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：委託業務の種類・作業内容、成果物・納品物または完了条件、甲乙の担当範囲。一般的な表現だけで、業務内容や成果物を具体的に特定できない場合は要注意です。">
+                    <input type="checkbox" checked data-id="scope" data-name="業務範囲の明確性" />
                     <span class="checkmark">✓</span>
-                    <span class="criteria-copy"><span class="criteria-name">業務範囲の明確性</span><span class="criteria-description">委託する業務・成果物が具体的に定義されているか</span></span>
+                    <span class="criteria-copy"><span class="criteria-name">業務範囲の明確性</span></span>
                   </label>
-                  <label class="criteria-item">
-                    <input type="checkbox" checked data-name="報酬・支払条件" />
+                  <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：報酬額または算定方法、請求方法、支払期日または支払サイト。遅延損害金、振込手数料、実費精算の定めがある場合は、その内容も確認します。">
+                    <input type="checkbox" checked data-id="payment" data-name="報酬・支払条件" />
                     <span class="checkmark">✓</span>
-                    <span class="criteria-copy"><span class="criteria-name">報酬・支払条件</span><span class="criteria-description">金額、支払期日、遅延時の扱いが明確か</span></span>
+                    <span class="criteria-copy"><span class="criteria-name">報酬・支払条件</span></span>
                   </label>
-                  <label class="criteria-item">
-                    <input type="checkbox" checked data-name="知的財産権の帰属" />
+                  <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：対象となる知的財産権、帰属先または移転先、権利移転の時期、成果物の利用範囲。著作者人格権や第三者素材の扱いも確認します。">
+                    <input type="checkbox" checked data-id="intellectual-property" data-name="知的財産権の帰属" />
                     <span class="checkmark">✓</span>
-                    <span class="criteria-copy"><span class="criteria-name">知的財産権の帰属</span><span class="criteria-description">成果物の権利帰属と利用範囲に不足がないか</span></span>
+                    <span class="criteria-copy"><span class="criteria-name">知的財産権の帰属</span></span>
                   </label>
-                  <label class="criteria-item">
-                    <input type="checkbox" checked data-name="解除・損害賠償" />
+                  <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：契約違反時の解除条件、催告・是正期間、損害賠償の対象・上限・責任範囲。甲乙の一方だけに過度な負担を課す記述がないかも確認します。">
+                    <input type="checkbox" checked data-id="termination-liability" data-name="解除・損害賠償" />
                     <span class="checkmark">✓</span>
-                    <span class="criteria-copy"><span class="criteria-name">解除・損害賠償</span><span class="criteria-description">解除条件や責任範囲が一方的になっていないか</span></span>
+                    <span class="criteria-copy"><span class="criteria-name">解除・損害賠償</span></span>
+                  </label>
+                  <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：秘密情報の範囲、対象外情報、利用目的、第三者への開示条件、契約終了後の存続期間。秘密保持義務はあるものの、範囲や終了時期が曖昧な場合は判断材料が不足します。">
+                    <input type="checkbox" checked data-id="confidentiality" data-name="秘密保持の具体性" />
+                    <span class="checkmark">✓</span>
+                    <span class="criteria-copy"><span class="criteria-name">秘密保持の具体性</span></span>
+                  </label>
+                  <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：契約に適用する国または地域の法律。裁判所の管轄や紛争解決地だけが定められていて、適用法が明示されていない場合は準拠法の記述とはみなしません。">
+                    <input type="checkbox" checked data-id="governing-law" data-name="準拠法の明確性" />
+                    <span class="checkmark">✓</span>
+                    <span class="criteria-copy"><span class="criteria-name">準拠法の明確性</span></span>
                   </label>
                 </div>
               </div>
 
               <div class="control-block">
                 <div class="control-heading">
-                  <h2>使用するLLM</h2>
+                  <h2>レビュー実行モード</h2>
                   <span class="tiny-label">モデルを選択</span>
                 </div>
                 <div class="model-options">
                   <label class="model-option">
-                    <input type="radio" name="model" value="gpt-5.6-luna" checked />
-                    <span class="model-label"><span class="model-name">gpt-5.6-luna</span><span class="model-detail">高速・バランス型</span></span>
+                    <input type="radio" name="executionMode" value="gpt-5.6-luna" checked />
+                    <span class="model-label"><span class="model-name">gpt-5.6-luna</span></span>
                   </label>
                   <label class="model-option">
-                    <input type="radio" name="model" value="jev" />
-                    <span class="model-label"><span class="model-name">JEV</span><span class="model-detail">契約レビュー特化</span></span>
+                    <input type="radio" name="executionMode" value="jev" />
+                    <span class="model-label"><span class="model-name">JEV</span></span>
+                  </label>
+                  <label class="model-option">
+                    <input type="radio" name="executionMode" value="both" />
+                    <span class="model-label"><span class="model-name">両方で比較</span></span>
                   </label>
                 </div>
               </div>
 
               <div class="run-area">
                 <button class="review-button" id="reviewButton" type="button"><span class="button-symbol">↗</span>レビューを実行</button>
-                <p class="run-note">選択した観点と契約書本文をLLMに送信して判定します</p>
+                <p class="run-note">同じ契約書とチェック観点を選択したモデルへ送信します</p>
               </div>
             </section>
 
             <section class="card results-card" id="resultsCard" aria-live="polite">
               <div class="results-summary">
-                <span class="summary-icon">✓</span>
-                <span class="summary-copy"><span class="summary-title">レビュー結果</span><span class="summary-meta" id="summaryMeta">gpt-5.6-luna · 4項目を確認</span></span>
+                <span class="summary-icon" id="summaryIcon">✓</span>
+                <span class="summary-copy"><span class="summary-title">レビュー結果</span><span class="summary-meta" id="summaryMeta">実行すると結果が表示されます</span></span>
               </div>
-              <div class="result-list" id="resultList"></div>
+              <div class="comparison-table-wrap" id="comparisonTableWrap"></div>
             </section>
           </aside>
         </div>
@@ -346,9 +395,21 @@
       const criteriaInputs = [...document.querySelectorAll('.criteria-item input')];
       const reviewButton = document.getElementById('reviewButton');
       const resultsCard = document.getElementById('resultsCard');
-      const resultList = document.getElementById('resultList');
+      const comparisonTableWrap = document.getElementById('comparisonTableWrap');
       const summaryMeta = document.getElementById('summaryMeta');
+      const summaryIcon = document.getElementById('summaryIcon');
       const toast = document.getElementById('toast');
+
+      const modelLabels = {
+        'gpt-5.6-luna': 'gpt-5.6-luna',
+        jev: 'JEV',
+      };
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>'"]/g, (character) => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;',
+        }[character]));
+      }
 
       function updateEditorMeta() {
         const lines = contractText.value.split('\n');
@@ -368,12 +429,121 @@
         showToast.timer = window.setTimeout(() => toast.classList.remove('is-visible'), 2600);
       }
 
-      contractText.addEventListener('input', updateEditorMeta);
-      criteriaInputs.forEach((input) => input.addEventListener('change', updateCriteriaCount));
+      function formatTokens(value) {
+        return value === null || value === undefined ? '-' : Number(value).toLocaleString('ja-JP');
+      }
 
-      reviewButton.addEventListener('click', () => {
+      function formatRiskScore(value) {
+        return `${Math.round(Number(value || 0))} / 100`;
+      }
+
+      function modelKey(modelId) {
+        return modelId === 'gpt-5.6-luna' ? 'gpt' : 'jev';
+      }
+
+      function cellId(modelId, criterionId) {
+        return `cell-${modelKey(modelId)}-${criterionId}`;
+      }
+
+      function createComparisonTable(selected, modelIds) {
+        const modelHeaders = modelIds.map((modelId) => {
+          const key = modelKey(modelId);
+          return `<th><div class="model-column-head"><div><span class="model-column-name">${escapeHtml(modelLabels[modelId])}</span><span class="model-column-version" id="version-${key}">実行待ち</span></div><span class="model-state" id="state-${key}">待機中</span></div><div class="model-metric-line"><span>Latency <strong id="latency-${key}">—</strong></span><span>Tokens <strong id="tokens-${key}">—</strong></span></div></th>`;
+        }).join('');
+
+        const rows = selected.map((input) => {
+          const criterionId = input.dataset.id;
+          const modelCells = modelIds.map((modelId) => `<td class="comparison-cell is-pending" id="${cellId(modelId, criterionId)}">待機中…</td>`).join('');
+          return `<tr><td class="criterion-cell">${escapeHtml(input.dataset.name)}</td>${modelCells}</tr>`;
+        }).join('');
+
+        comparisonTableWrap.innerHTML = `<table class="comparison-table"><thead><tr><th>チェック項目</th>${modelHeaders}</tr></thead><tbody>${rows}</tbody></table>`;
+        resultsCard.classList.add('is-visible');
+      }
+
+      function updateProgress(completed, total, elapsedMs) {
+        if (completed < total) {
+          summaryIcon.textContent = '…';
+          summaryMeta.textContent = `${completed} / ${total}モデル応答済み · 受信した結果から表示中`;
+          return;
+        }
+        summaryIcon.textContent = '✓';
+        summaryMeta.textContent = `${total}モデル完了 · 全体レイテンシ ${elapsedMs} ms`;
+      }
+
+      function renderResultCell(item) {
+        const statusClass = item.status === 'warning' ? 'warn' : item.status;
+        const mark = item.status === 'pass' ? '✓' : item.status === 'warning' ? '!' : '×';
+        const statusLabel = item.status === 'pass' ? 'PASS' : item.status === 'warning' ? 'WARNING' : 'FAIL';
+        return `<div class="comparison-cell-content"><span class="result-status ${statusClass}">${mark}</span><span class="comparison-cell-copy"><span class="comparison-cell-status">${statusLabel}</span><span class="comparison-cell-risk">危険度 ${formatRiskScore(item.riskScore)}</span></span></div>`;
+      }
+
+      function updateProviderResult(modelId, result, selected) {
+        const key = modelKey(modelId);
+        const state = document.getElementById(`state-${key}`);
+        const version = document.getElementById(`version-${key}`);
+        const latency = document.getElementById(`latency-${key}`);
+        const tokens = document.getElementById(`tokens-${key}`);
+        if (!state || !version || !latency || !tokens) return;
+
+        if (result.error) {
+          state.textContent = 'エラー';
+          state.className = 'model-state is-error';
+          version.textContent = '実行に失敗';
+          selected.forEach((input) => {
+            const cell = document.getElementById(cellId(modelId, input.dataset.id));
+            if (cell) {
+              cell.className = 'comparison-cell is-error';
+              cell.textContent = result.error;
+            }
+          });
+          return;
+        }
+
+        state.textContent = '完了';
+        state.className = 'model-state is-done';
+        version.textContent = result.resolvedModel || result.requestedModel;
+        latency.textContent = `${result.latencyMs} ms`;
+        tokens.textContent = formatTokens(result.usage.totalTokens);
+
+        result.items.forEach((item) => {
+          const cell = document.getElementById(cellId(modelId, item.criterionId));
+          if (cell) {
+            cell.className = 'comparison-cell';
+            cell.innerHTML = renderResultCell(item);
+          }
+        });
+      }
+
+      async function requestProvider(modelId, payload, selected) {
+        try {
+          const response = await fetch('/api/review', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...payload, executionMode: modelId }),
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || 'レビューに失敗しました');
+          const result = data.results?.[0];
+          if (!result) throw new Error('モデルから結果を取得できませんでした');
+          updateProviderResult(modelId, result, selected);
+        } catch (error) {
+          updateProviderResult(modelId, {
+            provider: modelId,
+            requestedModel: modelId,
+            resolvedModel: null,
+            latencyMs: 0,
+            usage: { totalTokens: null },
+            items: [],
+            error: error instanceof Error ? error.message : 'レビューに失敗しました',
+          }, selected);
+        }
+      }
+
+      async function runReview() {
         const selected = criteriaInputs.filter((input) => input.checked);
-        const model = document.querySelector('input[name="model"]:checked').value;
+        const executionMode = document.querySelector('input[name="executionMode"]:checked').value;
+        const modelIds = executionMode === 'both' ? ['jev', 'gpt-5.6-luna'] : [executionMode];
 
         if (!contractText.value.trim()) {
           showToast('契約書本文を入力してください');
@@ -387,26 +557,29 @@
 
         reviewButton.disabled = true;
         reviewButton.innerHTML = '<span class="button-symbol">…</span>レビュー中…';
-        window.setTimeout(() => {
-          const details = {
-            '業務範囲の明確性': { status: 'pass', mark: '✓', message: '対象業務と成果物が記載されています。' },
-            '報酬・支払条件': { status: 'pass', mark: '✓', message: '委託料と支払期日が明確に定められています。' },
-            '知的財産権の帰属': { status: 'warn', mark: '!', message: '権利移転の範囲と利用許諾を追加確認してください。' },
-            '解除・損害賠償': { status: 'fail', mark: '×', message: '損害賠償の上限・範囲に関する条項がありません。' },
-          };
+        const payload = {
+          contractText: contractText.value,
+          criteriaIds: selected.map((input) => input.dataset.id),
+        };
+        const startedAt = performance.now();
+        let completed = 0;
+        createComparisonTable(selected, modelIds);
+        updateProgress(0, modelIds.length, 0);
 
-          resultList.innerHTML = selected.map((input) => {
-            const item = details[input.dataset.name] || { status: 'warn', mark: '!', message: 'この観点は追加確認が必要です。' };
-            return `<div class="result-item"><span class="result-status ${item.status}">${item.mark}</span><span class="result-copy"><span class="result-name">${input.dataset.name}</span><span class="result-detail">${item.message}</span></span></div>`;
-          }).join('');
-          summaryMeta.textContent = `${model} · ${selected.length}項目を確認`;
-          resultsCard.classList.add('is-visible');
-          reviewButton.disabled = false;
-          reviewButton.innerHTML = '<span class="button-symbol">↗</span>レビューを再実行';
-          showToast('レビュー結果を更新しました');
-        }, 900);
-      });
+        await Promise.allSettled(modelIds.map(async (modelId) => {
+          await requestProvider(modelId, payload, selected);
+          completed += 1;
+          updateProgress(completed, modelIds.length, Math.round(performance.now() - startedAt));
+        }));
 
+        reviewButton.disabled = false;
+        reviewButton.innerHTML = '<span class="button-symbol">↗</span>レビューを再実行';
+        showToast('レビュー結果を更新しました');
+      }
+
+      contractText.addEventListener('input', updateEditorMeta);
+      criteriaInputs.forEach((input) => input.addEventListener('change', updateCriteriaCount));
+      reviewButton.addEventListener('click', runReview);
       updateEditorMeta();
       updateCriteriaCount();
     </script>
