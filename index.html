@@ -144,12 +144,14 @@
       .criteria-copy { min-width: 0; }
       .criteria-name { display: block; margin-bottom: 3px; font-size: 12px; font-weight: 800; }
 
-      .model-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
-      .model-option { position: relative; }
-      .model-option input { position: absolute; opacity: 0; }
-      .model-label { display: block; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: #fff; transition: .16s ease; }
-      .model-option input:checked + .model-label { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(44,154,141,.1); background: #f3fbf9; }
-      .model-option input:focus-visible + .model-label { outline: 3px solid rgba(44,154,141,.2); }
+      .model-options { display: flex; flex-direction: column; gap: 8px; }
+      .model-option { position: relative; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #e8eceb; border-radius: 9px; background: #fcfdfc; transition: .16s ease; }
+      .model-option:hover { border-color: #b8dad4; background: #f8fcfb; }
+      .model-option input { position: absolute; opacity: 0; pointer-events: none; }
+      .model-checkmark { flex: 0 0 auto; width: 17px; height: 17px; display: grid; place-items: center; border: 1px solid #becbca; border-radius: 5px; color: transparent; background: white; font-size: 11px; font-weight: 900; }
+      .model-option input:checked + .model-checkmark { border-color: var(--teal); color: white; background: var(--teal); }
+      .model-option input:focus-visible + .model-checkmark { outline: 3px solid rgba(44,154,141,.2); }
+      .model-label { display: block; min-width: 0; }
       .model-name { display: block; font-size: 11px; font-weight: 800; }
 
       .run-area { padding: 18px 20px 20px; background: #f8faf9; }
@@ -355,10 +357,12 @@
                 <div class="model-options">
                   <label class="model-option">
                     <input type="checkbox" name="executionMode" value="gpt-5.6-luna" checked />
+                    <span class="model-checkmark">✓</span>
                     <span class="model-label"><span class="model-name">gpt-5.6-luna</span></span>
                   </label>
                   <label class="model-option">
                     <input type="checkbox" name="executionMode" value="jev" checked />
+                    <span class="model-checkmark">✓</span>
                     <span class="model-label"><span class="model-name">JEV</span></span>
                   </label>
                 </div>
