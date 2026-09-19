@@ -11,6 +11,12 @@ export type Criterion = {
   instructions: string;
 };
 
+export type ContractClause = {
+  id: string;
+  label: string;
+  text: string;
+};
+
 export type Usage = {
   inputTokens: number | null;
   outputTokens: number | null;
@@ -22,6 +28,7 @@ export type ReviewItem = {
   criterionName: string;
   status: ReviewStatus;
   riskScore: number;
+  evidence: ContractClause | null;
 };
 
 export type ProviderReviewResult = {
@@ -43,4 +50,5 @@ export type ReviewResponse = {
 export type ReviewInput = {
   contractText: string;
   criteria: Criterion[];
+  clauses: ContractClause[];
 };

@@ -144,7 +144,7 @@
       .criteria-copy { min-width: 0; }
       .criteria-name { display: block; margin-bottom: 3px; font-size: 12px; font-weight: 800; }
 
-      .model-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
+      .model-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
       .model-option { position: relative; }
       .model-option input { position: absolute; opacity: 0; }
       .model-label { display: block; padding: 12px; border: 1px solid var(--line); border-radius: 9px; background: #fff; transition: .16s ease; }
@@ -209,6 +209,11 @@
       .comparison-cell-copy { min-width: 0; }
       .comparison-cell-status { display: block; color: var(--ink); font-size: 10px; font-weight: 800; }
       .comparison-cell-risk { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+      .comparison-cell-evidence { margin-top: 10px; padding-top: 8px; border-top: 1px solid #edf0ef; color: var(--muted); font-size: 9px; line-height: 1.45; }
+      .evidence-details summary { color: var(--teal-dark); cursor: pointer; font-size: 9px; font-weight: 800; }
+      .evidence-details summary::marker { color: var(--teal); }
+      .evidence-quote { margin: 6px 0 0; padding: 7px 8px; border-left: 2px solid #b7ded7; color: #536a70; background: #f8fbfa; white-space: pre-wrap; font-size: 9px; line-height: 1.55; }
+      .comparison-cell-evidence.is-empty { color: #8a989d; }
       .comparison-cell.is-pending { color: var(--muted); font-size: 10px; }
       .comparison-cell.is-error { color: var(--red); font-size: 10px; line-height: 1.4; }
       .comparison-cell .result-status { width: 22px; height: 22px; }
@@ -311,7 +316,7 @@
               <div class="control-block">
                 <div class="control-heading">
                   <h2>チェック観点</h2>
-                  <span class="count" id="criteriaCount">4 / 4 選択中</span>
+                  <span class="count" id="criteriaCount">5 / 5 選択中</span>
                 </div>
                 <div class="criteria">
                   <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：委託業務の種類・作業内容、成果物・納品物または完了条件、甲乙の担当範囲。一般的な表現だけで、業務内容や成果物を具体的に特定できない場合は要注意です。">
@@ -334,11 +339,6 @@
                     <span class="checkmark">✓</span>
                     <span class="criteria-copy"><span class="criteria-name">解除・損害賠償</span></span>
                   </label>
-                  <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：秘密情報の範囲、対象外情報、利用目的、第三者への開示条件、契約終了後の存続期間。秘密保持義務はあるものの、範囲や終了時期が曖昧な場合は判断材料が不足します。">
-                    <input type="checkbox" checked data-id="confidentiality" data-name="秘密保持の具体性" />
-                    <span class="checkmark">✓</span>
-                    <span class="criteria-copy"><span class="criteria-name">秘密保持の具体性</span></span>
-                  </label>
                   <label class="criteria-item" tabindex="0" data-tooltip="確認する記述：契約に適用する国または地域の法律。裁判所の管轄や紛争解決地だけが定められていて、適用法が明示されていない場合は準拠法の記述とはみなしません。">
                     <input type="checkbox" checked data-id="governing-law" data-name="準拠法の明確性" />
                     <span class="checkmark">✓</span>
@@ -354,16 +354,12 @@
                 </div>
                 <div class="model-options">
                   <label class="model-option">
-                    <input type="radio" name="executionMode" value="gpt-5.6-luna" checked />
+                    <input type="checkbox" name="executionMode" value="gpt-5.6-luna" checked />
                     <span class="model-label"><span class="model-name">gpt-5.6-luna</span></span>
                   </label>
                   <label class="model-option">
-                    <input type="radio" name="executionMode" value="jev" />
+                    <input type="checkbox" name="executionMode" value="jev" checked />
                     <span class="model-label"><span class="model-name">JEV</span></span>
-                  </label>
-                  <label class="model-option">
-                    <input type="radio" name="executionMode" value="both" />
-                    <span class="model-label"><span class="model-name">両方で比較</span></span>
                   </label>
                 </div>
               </div>
@@ -399,6 +395,7 @@
       const summaryMeta = document.getElementById('summaryMeta');
       const summaryIcon = document.getElementById('summaryIcon');
       const toast = document.getElementById('toast');
+      const modelInputs = [...document.querySelectorAll('input[name="executionMode"]')];
 
       const modelLabels = {
         'gpt-5.6-luna': 'gpt-5.6-luna',
@@ -475,7 +472,10 @@
         const statusClass = item.status === 'warning' ? 'warn' : item.status;
         const mark = item.status === 'pass' ? '✓' : item.status === 'warning' ? '!' : '×';
         const statusLabel = item.status === 'pass' ? 'PASS' : item.status === 'warning' ? 'WARNING' : 'FAIL';
-        return `<div class="comparison-cell-content"><span class="result-status ${statusClass}">${mark}</span><span class="comparison-cell-copy"><span class="comparison-cell-status">${statusLabel}</span><span class="comparison-cell-risk">危険度 ${formatRiskScore(item.riskScore)}</span></span></div>`;
+        const evidence = item.evidence
+          ? `<details class="evidence-details"><summary>根拠条文：${escapeHtml(item.evidence.label)}</summary><blockquote class="evidence-quote">${escapeHtml(item.evidence.text)}</blockquote></details>`
+          : '<span class="comparison-cell-evidence is-empty">根拠条文なし</span>';
+        return `<div class="comparison-cell-content"><span class="result-status ${statusClass}">${mark}</span><span class="comparison-cell-copy"><span class="comparison-cell-status">${statusLabel}</span><span class="comparison-cell-risk">危険度 ${formatRiskScore(item.riskScore)}</span></span></div><div class="comparison-cell-evidence">${evidence}</div>`;
       }
 
       function updateProviderResult(modelId, result, selected) {
@@ -542,8 +542,9 @@
 
       async function runReview() {
         const selected = criteriaInputs.filter((input) => input.checked);
-        const executionMode = document.querySelector('input[name="executionMode"]:checked').value;
-        const modelIds = executionMode === 'both' ? ['jev', 'gpt-5.6-luna'] : [executionMode];
+        const selectedModelIds = modelInputs.filter((input) => input.checked).map((input) => input.value);
+        const modelIds = ['jev', 'gpt-5.6-luna'].filter((modelId) => selectedModelIds.includes(modelId));
+        const executionMode = modelIds.length === 2 ? 'both' : modelIds[0];
 
         if (!contractText.value.trim()) {
           showToast('契約書本文を入力してください');
@@ -552,6 +553,10 @@
         }
         if (!selected.length) {
           showToast('チェック観点を1つ以上選択してください');
+          return;
+        }
+        if (!modelIds.length) {
+          showToast('利用するモデルを1つ以上選択してください');
           return;
         }
 

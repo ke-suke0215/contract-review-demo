@@ -1,4 +1,5 @@
 import { CHECK_CRITERIA } from "./config";
+import { extractClauses } from "./clauses";
 import { jevProvider } from "./providers/jev";
 import { openAIProvider } from "./providers/openai";
 import type {
@@ -39,7 +40,11 @@ export async function runReview(params: {
   if (!criteria.length) throw new Error("チェック項目を1つ以上選択してください。");
 
   const startedAt = performance.now();
-  const input = { contractText: params.contractText, criteria };
+  const input = {
+    contractText: params.contractText,
+    criteria,
+    clauses: extractClauses(params.contractText),
+  };
   const results = await Promise.all(
     selectedProviderIds(params.executionMode).map(async (providerId) => {
       try {

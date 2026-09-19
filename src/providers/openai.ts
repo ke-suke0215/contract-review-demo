@@ -5,6 +5,7 @@ import type {
   ReviewItem,
   Usage,
 } from "../review-types";
+import { formatClauseIndex } from "../clauses";
 import { riskScoreFromProbability, statusFromProbability } from "./provider";
 
 const OPENAI_ENDPOINT = "https://api.openai.com/v1/responses";
@@ -26,6 +27,7 @@ type OpenAIResponse = {
 
 type StructuredReview = {
   passProbability: number;
+  evidenceClauseId: string;
 };
 
 type CriterionRun = {
@@ -34,18 +36,22 @@ type CriterionRun = {
   resolvedModel: string | null;
 };
 
-function buildPrompt(contractText: string, criterion: Criterion): string {
-  return `契約書のチェック項目を1つ判定してください。\n\n判定対象:\n- ${criterion.name}\n\n確認する内容:\n${criterion.instructions}\n\n契約書本文に、確認する内容の必要な記述がどの程度存在するかを判断してください。契約書に明示されていない内容を推測で補ってはいけません。\n\n確認内容を満たしている確率を passProbability として 0 から 1 の数値で返してください。これは、必要な記述が契約書本文に存在すると考えられる確率です。\n\n理由や条文の引用、pass・warning・failのラベルは返さないでください。\n\n契約書本文:\n${contractText}`;
+function buildPrompt(input: ReviewInput, criterion: Criterion): string {
+  return `契約書のチェック項目を1つ判定してください。\n\n判定対象:\n- ${criterion.name}\n\n確認する内容:\n${criterion.instructions}\n\n契約書本文に、確認する内容の必要な記述がどの程度存在するかを判断してください。契約書に明示されていない内容を推測で補ってはいけません。条文単体だけでなく、契約書全体の条文間の関係も考慮してください。\n\n確認内容を満たしている確率を passProbability として 0 から 1 の数値で返してください。これは、必要な記述が契約書本文に存在すると考えられる確率です。\n\n次の条文ID一覧から、判断の根拠となる主な条文を1つ選んで evidenceClauseId に設定してください。根拠となる条文が明確でない場合は none を設定してください。条文本文や理由は返さないでください。\n\n条文ID一覧:\n${formatClauseIndex(input.clauses)}\n\npass・warning・failのラベルは返さないでください。\n\n契約書本文:\n${input.contractText}`;
 }
 
-function buildSchema(criterion: Criterion) {
+function buildSchema(criterion: Criterion, clauses: ReviewInput["clauses"]) {
   return {
     type: "object",
     additionalProperties: false,
     properties: {
       passProbability: { type: "number", minimum: 0, maximum: 1 },
+      evidenceClauseId: {
+        type: "string",
+        enum: [...clauses.map((clause) => clause.id), "none"],
+      },
     },
-    required: ["passProbability"],
+    required: ["passProbability", "evidenceClauseId"],
     title: `contract_review_${criterion.id}`,
   };
 }
@@ -68,7 +74,7 @@ export class OpenAIProvider {
   readonly id = "gpt-5.6-luna" as const;
   readonly requestedModel = OPENAI_MODEL;
 
-  private async reviewCriterion(contractText: string, criterion: Criterion): Promise<CriterionRun> {
+  private async reviewCriterion(input: ReviewInput, criterion: Criterion): Promise<CriterionRun> {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY が設定されていません。.env を確認してください。");
@@ -85,13 +91,13 @@ export class OpenAIProvider {
         store: false,
         reasoning: { effort: "medium" },
         instructions: "あなたは契約書レビューの判定器です。指定されたJSONスキーマに厳密に従ってください。",
-        input: buildPrompt(contractText, criterion),
+        input: buildPrompt(input, criterion),
         text: {
           format: {
             type: "json_schema",
             name: `contract_review_${criterion.id}`,
             strict: true,
-            schema: buildSchema(criterion),
+            schema: buildSchema(criterion, input.clauses),
           },
         },
       }),
@@ -111,6 +117,7 @@ export class OpenAIProvider {
     }
 
     const passProbability = structured.passProbability;
+    const evidence = input.clauses.find((clause) => clause.id === structured.evidenceClauseId) ?? null;
     const inputTokens = body.usage?.input_tokens ?? null;
     const outputTokens = body.usage?.output_tokens ?? null;
 
@@ -126,6 +133,7 @@ export class OpenAIProvider {
         criterionName: criterion.name,
         status: statusFromProbability(passProbability),
         riskScore: riskScoreFromProbability(passProbability),
+        evidence,
       },
     };
   }
@@ -133,7 +141,7 @@ export class OpenAIProvider {
   async review(input: ReviewInput): Promise<ProviderReviewResult> {
     const startedAt = performance.now();
     const runs = await Promise.all(
-      input.criteria.map((criterion) => this.reviewCriterion(input.contractText, criterion)),
+      input.criteria.map((criterion) => this.reviewCriterion(input, criterion)),
     );
     const resolvedModel = runs.find((run) => run.resolvedModel)?.resolvedModel ?? this.requestedModel;
 
